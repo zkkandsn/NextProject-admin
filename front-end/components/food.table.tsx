@@ -11,29 +11,37 @@ import { Container } from "@mui/material";
 import Button from "@mui/material/Button";
 import { display } from "@mui/system";
 import axios from "axios";
-import { useRouter } from "next/router";
 
-export default function CategoryTable() {
-  const [categories, setCategories] = useState<Category>([]);
+type Foods = {
+  id: number;
+  name: string;
+  price: number;
+  ingredient: string;
+  stock: number;
+  category_id: number;
+  discount: number;
+  image: string;
+  portion: number;
+  tumb_img: string;
+  sales: number;
+  category: string;
+};
 
-  const deleteData = (id) => {
-    console.log(id);
-    axios.delete("http://localhost:3001/api/categories/delete", {
+export default function FoodTable() {
+  const [foods, setFoods] = useState<Foods[]>([]);
+
+  const deleteData = (id: number) => {
+    axios.delete("http://localhost:3001/api/foods/delete", {
       data: {
         id: id,
       },
     });
   };
-  const router = useRouter();
 
-  const handleClick = (e) => {
-    console.log(e);
-    router.push(`/category/edit/${e}`);
-  };
   useEffect(() => {
-    fetch("http://localhost:3001/api/categories")
+    fetch("http://localhost:3001/api/foods")
       .then((res) => res.json())
-      .then((res) => setCategories(res.data));
+      .then((res) => setFoods(res.data));
   }, []);
   return (
     <Container>
@@ -43,13 +51,17 @@ export default function CategoryTable() {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell align="left">Name</TableCell>
-              <TableCell align="left">Color</TableCell>
+              <TableCell align="left">Price</TableCell>
+              <TableCell align="left">Ingredient</TableCell>
+              <TableCell align="left">Stock</TableCell>
+              <TableCell align="left">Category</TableCell>
+              <TableCell align="left">Discount</TableCell>
               <TableCell align="left">Edit</TableCell>
               <TableCell align="left">Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories?.map((e) => (
+            {foods?.map((e) => (
               <TableRow
                 key={e.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -58,14 +70,17 @@ export default function CategoryTable() {
                   {e.id}
                 </TableCell>
                 <TableCell align="left">{e.name}</TableCell>
-                <TableCell align="left">{e.color}</TableCell>
+                <TableCell align="left">{e.price}</TableCell>
+                <TableCell align="left">{e.ingredient}</TableCell>
+                <TableCell id="numberColor" align="left">
+                  {e.stock}
+                </TableCell>
+                <TableCell align="left">{e.category}</TableCell>
+                <TableCell id="numberColor" align="left">
+                  {e.discount}
+                </TableCell>
                 <TableCell align="left">
-                  <Button
-                    onClick={() => {
-                      handleClick(e.id);
-                    }}
-                    variant="outlined"
-                  >
+                  <Button href="/category/edit" variant="outlined">
                     Edit
                   </Button>
                 </TableCell>
